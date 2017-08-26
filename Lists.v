@@ -573,3 +573,5 @@ Module NatList.
     simpl.
     rewrite -> H. reflexivity.
     Qed.
+
+End NatList.
