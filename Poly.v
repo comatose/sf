@@ -235,7 +235,7 @@ Proof.
   intros X Y f.
   induction l as [].
   - simpl. reflexivity.
-  - simpl. rewrite <- IHl. 
+  - simpl. rewrite <- IHl.
     rewrite -> map_dist. simpl. reflexivity.
 Qed.
 
@@ -318,3 +318,72 @@ Theorem uncurry_curry : forall (X Y Z : Type) (f : X -> Y -> Z) x y,
 Proof.
   reflexivity.
 Qed.
+
+Module Church.
+  Definition nat := forall (X:Type), (X -> X) -> X -> X.
+
+  Check nat.
+
+  Definition id {X : Type} (x : X) : X := x.
+
+  Definition one : nat :=
+    fun (X:Type) (f:X -> X) (x: X) => f x.
+
+  Definition one' : nat :=
+    fun (X:Type) (f:X -> X) => (fun (x : X) => f x).
+
+  Definition one'' (X:Type) (f:X -> X) (x : X):  X :=  f x.
+
+  Check (one bool id).
+
+  Check one.
+  Check one'.
+  Check one''.
+
+  Definition two : nat :=
+    fun (X:Type) (f:X -> X) (x: X) => f (f x).
+
+  Definition three : nat :=
+    fun (X:Type) (f:X -> X) (x: X) => f (f (f x)).
+
+  Definition zero : nat :=
+    fun (X:Type) (f:X -> X) (x: X) => x.
+
+  Definition succ (n: nat) : nat :=
+    fun (X:Type) (f:X -> X) (x: X) => f (n X f x).
+
+  Example succ_1 : succ zero = one.
+  Proof. reflexivity. Qed.
+
+  Example succ_2 : succ one = two.
+  Proof. reflexivity. Qed.
+
+  Example succ_3 : succ two = three.
+  Proof. reflexivity. Qed.
+
+  Definition plus (n m : nat) : nat :=
+    fun (X : Type) (f: X -> X) (x: X) => n X f (m X f x).
+
+  Example plus_1 : plus zero one = one.
+  Proof. reflexivity. Qed.
+
+  Example plus_2 : plus two three = plus three two.
+  Proof. reflexivity. Qed.
+
+  Example plus_3 :
+    plus (plus two two) three = plus one (plus three three).
+  Proof. reflexivity. Qed.
+
+  Definition mult (n m : nat) : nat :=
+    fun (X: Type) (f: X -> X) (x: X) => n X (m X f) x.
+
+  Example mult_1 : mult one one = one.
+  Proof. reflexivity. Qed.
+
+  Example mult_2 : mult zero (plus three three) = zero.
+  Proof. reflexivity. Qed.
+
+  Example mult_3 : mult two three = plus three three.
+  Proof. reflexivity. Qed.
+
+End Church.
