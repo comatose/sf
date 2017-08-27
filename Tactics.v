@@ -269,3 +269,140 @@ Proof.
       rewrite -> H1.
       reflexivity.
 Qed.
+
+
+Theorem beq_nat_true : forall n m,
+    beq_nat n m = true ->
+    n = m.
+Proof.
+  induction n as [|n' IHn'].
+  - simpl. destruct m.
+    + reflexivity.
+    + intros H.
+      inversion H.
+  - simpl. destruct m.
+    + intros H.
+      inversion H.
+    + intros H.
+      apply f_equal.
+      apply IHn'.
+      apply H.
+Qed.
+
+Theorem double_injective_take2 : forall n m,
+    double n = double m ->
+    n = m.
+Proof.
+  intros n m.
+  generalize dependent n.
+  induction m as [|m' IHm'].
+  - destruct n.
+    + reflexivity.
+    + simpl.
+      intros H.
+      inversion H.
+  - destruct n.
+    + simpl.
+      intros H.
+      inversion H.
+    + simpl.
+      intros H.
+      apply f_equal.
+      apply IHm'.
+      inversion H.
+      reflexivity.
+Qed.
+
+Theorem beq_id_true : forall x y,
+    NatList.beq_id x y = true -> x = y.
+Proof.
+  intros [m] [n].
+  simpl.
+  intros H.
+  assert(H' : m = n).
+  {
+    apply beq_nat_true.
+    apply H.
+  }
+  rewrite H'.
+  reflexivity.
+Qed.
+
+Theorem nth_error_after_last : forall (n:nat) (X:Type) (l:list X),
+    length l = n ->
+    nth_error l n = None.
+Proof.
+  intros n X l.
+  generalize dependent n.
+  induction l as [|h l' IHl'].
+  - intros n H.
+    reflexivity.
+  - intros n H.
+    destruct n.
+    + inversion H.
+    + apply IHl'.
+      inversion H.
+      reflexivity.
+Qed.
+
+Definition square n := n * n.
+
+Lemma square_mult : forall n m,
+    square (n * m) = square n * square m.
+Proof.
+  intros n m.
+  simpl.
+  unfold square.
+  rewrite mult_assoc.
+  assert (H: n * m * n = n * n * m).
+  {
+    rewrite mult_comm. apply mult_assoc.
+  }
+  rewrite H. rewrite mult_assoc. reflexivity.
+Qed.
+
+Definition bar x :=
+  match x with
+  | 0 => 5
+  | S _ => 5
+  end.
+
+Fact silly_fact_2_FAILED : forall m,
+    bar m + 1 = bar (m + 1) + 1.
+Proof.
+  intros m.
+  simpl.
+Abort.
+
+Fact silly_fact_2 : forall m,
+    bar m + 1 = bar (m + 1) + 1.
+Proof.
+  intros m.
+  destruct m.
+  - reflexivity.
+  - reflexivity.
+Qed.
+
+Definition sillyfun (n : nat) : bool :=
+  if beq_nat n 3 then false
+  else if beq_nat n 5 then false
+       else false.
+
+Theorem sillyfun_false : forall (n : nat),
+    sillyfun n = false.
+
+Proof.
+  intros n. unfold sillyfun.
+  destruct (beq_nat n 3).
+  - reflexivity.
+  - destruct (beq_nat n 5).
+    + reflexivity.
+    + reflexivity.
+Qed.
+
+Theorem combine_split : forall X Y (l : list (X * Y)) l1 l2,
+    split l = (l1, l2) ->
+    combine l1 l2 = l.
+Proof.
+  intros X Y l l1 l2 H.
+Abort.  

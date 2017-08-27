@@ -197,3 +197,32 @@ Proof.
   - simpl. reflexivity.
   - simpl. rewrite -> IHn. reflexivity.
 Qed.
+
+Theorem mult_1_l : forall n:nat, 1 * n = n.
+Proof.
+  intros [|n].
+  - reflexivity.
+  - simpl. rewrite <- plus_n_O. reflexivity.
+Qed.
+
+Theorem mult_plus_distr_r : forall n m p : nat,
+  (n + m) * p = (n * p) + (m * p).
+Proof.
+  intros n m p.
+  induction n.
+  - simpl. reflexivity.
+  - simpl. rewrite IHn.
+    rewrite plus_assoc.
+    reflexivity.
+Qed.
+
+Theorem mult_assoc : forall n m o : nat,
+    n * (m * o) = (n * m) * o.
+Proof.
+  intros n m o.
+  induction n.
+  - simpl. reflexivity.
+  - simpl. rewrite mult_plus_distr_r.
+    rewrite <- IHn.
+    reflexivity.
+Qed.
