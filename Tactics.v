@@ -1,4 +1,3 @@
-
 Require Export Poly.
 
 Theorem silly1 : forall (n m o p : nat),
@@ -234,13 +233,10 @@ Proof.
     destruct m.
     + intros H. inversion H.
     + intros H.
-      rewrite -> double_plus in H.
-      rewrite -> double_plus in H.
-      rewrite <- plus_n_Sm in H.
-      inversion H.
-      apply plus_n_n_injective in H1.
       apply f_equal.
-      rewrite -> H1.
+      apply IHn.
+      simpl in H.
+      inversion H.
       reflexivity.
 Qed.
 
