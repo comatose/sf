@@ -405,4 +405,62 @@ Theorem combine_split : forall X Y (l : list (X * Y)) l1 l2,
     combine l1 l2 = l.
 Proof.
   intros X Y l l1 l2 H.
-Abort.  
+  destruct l as [|h l'].
+  - simpl in H.
+    inversion H.
+    reflexivity.
+  - simpl in H.
+    generalize dependent l1.
+    generalize dependent l2.
+Abort.
+
+Definition sillyfun1 (n:nat) : bool :=
+  if beq_nat n 3 then true
+  else if beq_nat n 5 then true
+       else false.
+
+Theorem sillyfun1_odd_FAILED : forall n : nat,
+    sillyfun1 n = true ->
+    oddb n = true.
+Proof.
+  intros n eq.
+  unfold sillyfun1 in eq.
+  destruct (beq_nat n 3).
+Abort.
+
+Theorem silllyfun1_odd : forall n : nat,
+    sillyfun1 n = true ->
+    oddb n = true.
+Proof.
+  intros n eq.
+  unfold sillyfun1 in eq.
+  destruct (beq_nat n 3) eqn:Heqe3.
+  - apply beq_nat_true in Heqe3.
+    rewrite -> Heqe3. reflexivity.
+  - destruct (beq_nat n 5) eqn:Heqe5.
+    + apply beq_nat_true in Heqe5.
+      rewrite -> Heqe5. reflexivity.
+    + inversion eq. Qed.
+
+Theorem bool_fn_applied_thrice :
+  forall (f : bool -> bool) (b : bool),
+    f (f (f b)) = f b.
+Proof.
+  intros f b.
+  destruct b.
+  {
+    destruct (f true) eqn:H.
+    - rewrite -> H. apply H.
+    - destruct (f false) eqn:H0.
+      + apply H.
+      + apply H0.
+  }
+  {
+    destruct (f false) eqn:H.
+    - destruct (f true) eqn:H0.
+      + apply H0.
+      + apply H.
+    - rewrite -> H. apply H.
+  }
+Qed.
+
